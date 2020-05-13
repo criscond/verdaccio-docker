@@ -1,0 +1,67 @@
+#
+# This is the config file used for the docker images.
+# It allows all users to do anything, so don't use it on production systems.
+#
+# Do not configure host and port under `listen` in this file
+# as it will be ignored when using docker.
+# see https://github.com/verdaccio/verdaccio/blob/master/wiki/docker.md#docker-and-custom-port-configuration
+#
+# Look here for more config file examples:
+# https://github.com/verdaccio/verdaccio/tree/master/conf
+#
+
+# path to a directory with all packages
+storage: /verdaccio/storage
+
+auth:
+  htpasswd:
+    file: /verdaccio/conf/htpasswd
+    # Maximum amount of users allowed to register, defaults to "+inf".
+    # You can set this to -1 to disable registration.
+    max_users: 2
+security:
+  api:
+    jwt:
+      sign:
+        expiresIn: 60d
+        notBefore: 1
+web:
+  enable: true
+  title: My NPM Registry
+  logo: /verdaccio/conf/logo.png
+  primary_color: "#071e33"
+  gravatar: true
+  scope: "@myScope"
+  sort_packages: asc
+  sign:
+    expiresIn: 1d
+
+# a list of other known repositories we can talk to
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  '@myScope/*':
+     access: $all
+     publish: $authenticated
+     proxy: npmjs
+  '**':
+     access: $all
+     publish: $authenticated
+     proxy: npmjs  
+
+# To use `npm audit` uncomment the following section
+middlewares:
+  audit:
+    enabled: true
+
+https:
+    key: /verdaccio/ssl/npm.hostname.com.key
+    cert: /verdaccio/ssl/npm.hostname.com.cert
+    ca: /verdaccio/ssl/npm.hostname.com.bundle
+
+# log settings
+logs:
+  - {type: stdout, format: pretty, level: trace}
+  #- {type: file, path: verdaccio.log, level: info}

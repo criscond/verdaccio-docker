@@ -1,0 +1,18 @@
+version: '2.1'
+services:
+  verdaccio:
+    image: verdaccio/verdaccio:latest
+    restart: always
+    container_name: npm-registry
+    environment:
+      - VERDACCIO_PORT=4873
+      - VERDACCIO_PROTOCOL=https
+    ports:
+      - "4873:4873"
+    volumes:
+      - "/srv/npm/storage:/verdaccio/storage"
+      - "/srv/npm/config:/verdaccio/conf"
+      - "/srv/npm/ssl:/verdaccio/ssl"
+volumes:
+  verdaccio:
+    driver: local
